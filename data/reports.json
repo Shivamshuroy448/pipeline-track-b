@@ -1,0 +1,813 @@
+{
+  "patients": [
+    {
+      "patient_id": "P001",
+      "name": "Maria Santos",
+      "age": 58,
+      "sex": "F",
+      "diagnosis": "Oropharyngeal cancer",
+      "treatment": "Cisplatin + radiation",
+      "start_date": "2026-09-07",
+      "weight_start_kg": 68.0,
+      "weight_alert_kg": 64.6
+    },
+    {
+      "patient_id": "P002",
+      "name": "James Okafor",
+      "age": 63,
+      "sex": "M",
+      "diagnosis": "Laryngeal cancer",
+      "treatment": "Carboplatin + radiation",
+      "start_date": "2026-09-07",
+      "weight_start_kg": 84.0,
+      "weight_alert_kg": 79.8
+    },
+    {
+      "patient_id": "P003",
+      "name": "Elena Petrova",
+      "age": 47,
+      "sex": "F",
+      "diagnosis": "Nasopharyngeal cancer",
+      "treatment": "Cisplatin + radiation",
+      "start_date": "2026-09-07",
+      "weight_start_kg": 61.0,
+      "weight_alert_kg": 58.0
+    },
+    {
+      "patient_id": "P004",
+      "name": "David Chen",
+      "age": 71,
+      "sex": "M",
+      "diagnosis": "Hypopharyngeal cancer",
+      "treatment": "Cisplatin + radiation",
+      "start_date": "2026-09-07",
+      "weight_start_kg": 78.0,
+      "weight_alert_kg": 74.1
+    }
+  ],
+  "medications": [
+    {
+      "patient_id": "P002",
+      "name": "Ondansetron",
+      "purpose": "antiemetic",
+      "start_date": "2026-09-07",
+      "end_date": "2026-09-27"
+    },
+    {
+      "patient_id": "P002",
+      "name": "Aprepitant",
+      "purpose": "antiemetic",
+      "start_date": "2026-09-28",
+      "end_date": null
+    },
+    {
+      "patient_id": "P001",
+      "name": "Ondansetron",
+      "purpose": "antiemetic",
+      "start_date": "2026-09-07",
+      "end_date": null
+    },
+    {
+      "patient_id": "P003",
+      "name": "Ondansetron",
+      "purpose": "antiemetic",
+      "start_date": "2026-09-07",
+      "end_date": null
+    },
+    {
+      "patient_id": "P004",
+      "name": "Ondansetron",
+      "purpose": "antiemetic",
+      "start_date": "2026-09-07",
+      "end_date": null
+    }
+  ],
+  "medication_changes": [
+    {
+      "patient_id": "P002",
+      "old_med": "Ondansetron",
+      "new_med": "Aprepitant",
+      "change_date": "2026-09-28",
+      "reason": "Vomiting 4-5 episodes/week on ondansetron; switched to aprepitant"
+    }
+  ],
+  "reports": [
+    {
+      "report_id": "R001",
+      "patient_id": "P001",
+      "reported_at": "2026-09-07T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 2,
+        "vomiting_episodes": 0,
+        "pain": 1,
+        "mouth_sores": 1,
+        "swallowing": 2,
+        "weight_kg": 68.0
+      }
+    },
+    {
+      "report_id": "R002",
+      "patient_id": "P001",
+      "reported_at": "2026-09-10T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 0,
+        "pain": 3,
+        "mouth_sores": 0,
+        "swallowing": 0,
+        "weight_kg": 68.0
+      }
+    },
+    {
+      "report_id": "R003",
+      "patient_id": "P001",
+      "reported_at": "2026-09-14T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 2,
+        "pain": 4,
+        "mouth_sores": 3,
+        "swallowing": 3,
+        "weight_kg": 67.6
+      }
+    },
+    {
+      "report_id": "R004",
+      "patient_id": "P001",
+      "reported_at": "2026-09-17T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Felt nauseous most of the day, moderate nausea. Threw up twice, mostly in the morning. Throat pain was moderate, about 5/10. Lost some weight, 67.6 kg now.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R005",
+      "patient_id": "P001",
+      "reported_at": "2026-09-21T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt nauseous most of the day, moderate nausea. Threw up twice after dinner. Pain moderate today, swallowing hurts. Sores in my mouth moderate, 5/10. Swallowing is mild, food gets stuck. Exhausted all day, barely got out of bed.",
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 0,
+        "pain": 5,
+        "mouth_sores": 4,
+        "swallowing": 4,
+        "weight_kg": 67.2
+      }
+    },
+    {
+      "report_id": "R006",
+      "patient_id": "P001",
+      "reported_at": "2026-09-24T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 7,
+        "vomiting_episodes": 0,
+        "pain": 4,
+        "mouth_sores": 4,
+        "swallowing": 3,
+        "weight_kg": 67.2
+      }
+    },
+    {
+      "report_id": "R007",
+      "patient_id": "P001",
+      "reported_at": "2026-09-28T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt queasy all morning, bad. Throat pain was bad, about 7/10. Sores in my mouth bad, 7/10. Swallowing is moderate, food gets stuck.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 0,
+        "pain": 6,
+        "mouth_sores": 7,
+        "swallowing": 6,
+        "weight_kg": 66.8
+      }
+    },
+    {
+      "report_id": "R008",
+      "patient_id": "P001",
+      "reported_at": "2026-10-01T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt nauseous most of the day, moderate nausea. Pain around 5/10, worse when I eat. Mouth sores are bad, eating is painful. Trouble swallowing, about 5/10. Exhausted all day, barely got out of bed.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 1,
+        "pain": 6,
+        "mouth_sores": 7,
+        "swallowing": 5,
+        "weight_kg": 66.8
+      }
+    },
+    {
+      "report_id": "R009",
+      "patient_id": "P001",
+      "reported_at": "2026-10-05T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt queasy all morning, moderate. Threw up once after dinner. Pain quite bad today, swallowing hurts. Sores in my mouth quite bad, 6/10. Hard to swallow today, quite bad. Sticking to liquids.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 1,
+        "pain": 7,
+        "mouth_sores": 5,
+        "swallowing": 4,
+        "weight_kg": 66.4
+      }
+    },
+    {
+      "report_id": "R010",
+      "patient_id": "P001",
+      "reported_at": "2026-10-08T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea moderate \u2014 took ondansetron and it eased a bit. Threw up twice, mostly in the morning. Throat pain was moderate, about 5/10. Sores in my mouth quite bad, 6/10. Swallowing is quite bad, food gets stuck.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 2,
+        "pain": 5,
+        "mouth_sores": 5,
+        "swallowing": 5,
+        "weight_kg": 66.4
+      }
+    },
+    {
+      "report_id": "R011",
+      "patient_id": "P001",
+      "reported_at": "2026-10-12T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Felt nauseous most of the day, moderate nausea. Pain around 6/10, worse when I eat. Sores in my mouth moderate, 5/10. Trouble swallowing, about 5/10. Low energy, quite bad.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R012",
+      "patient_id": "P001",
+      "reported_at": "2026-10-15T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea was mild today, worst after eating. Pain moderate today, swallowing hurts. Sores in my mouth moderate, 4/10. Hard to swallow today, moderate. Sticking to liquids. Exhausted all day, barely got out of bed.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 1,
+        "pain": 5,
+        "mouth_sores": 5,
+        "swallowing": 5,
+        "weight_kg": 66.1
+      }
+    },
+    {
+      "report_id": "R013",
+      "patient_id": "P002",
+      "reported_at": "2026-09-07T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 1,
+        "pain": 1,
+        "mouth_sores": 1,
+        "swallowing": 1,
+        "weight_kg": 84.0
+      }
+    },
+    {
+      "report_id": "R014",
+      "patient_id": "P002",
+      "reported_at": "2026-09-10T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Felt queasy all morning, mild. Threw up twice, mostly in the morning.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R015",
+      "patient_id": "P002",
+      "reported_at": "2026-09-14T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea quite bad \u2014 took ondansetron and it eased a bit. Threw up twice, mostly in the morning. Throat pain was moderate, about 4/10. Mouth sores are mild, eating is painful. Trouble swallowing, about 3/10.",
+      "questionnaire": {
+        "nausea": 7,
+        "vomiting_episodes": 4,
+        "pain": 3,
+        "mouth_sores": 1,
+        "swallowing": 2,
+        "weight_kg": 83.4
+      }
+    },
+    {
+      "report_id": "R016",
+      "patient_id": "P002",
+      "reported_at": "2026-09-17T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea bad \u2014 took ondansetron and it eased a bit. Vomited three times today. Pain moderate today, swallowing hurts. More mouth sores today, mild. Using the mouthwash.",
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 3,
+        "pain": 4,
+        "mouth_sores": 2,
+        "swallowing": 3,
+        "weight_kg": 83.4
+      }
+    },
+    {
+      "report_id": "R017",
+      "patient_id": "P002",
+      "reported_at": "2026-09-21T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt queasy all morning, bad. Vomited five times today. Throat pain was moderate, about 4/10. Sores in my mouth moderate, 4/10. Trouble swallowing, about 3/10. Exhausted all day, barely got out of bed. Lost some weight, 82.6 kg now.",
+      "questionnaire": {
+        "nausea": 8,
+        "vomiting_episodes": 4,
+        "pain": 5,
+        "mouth_sores": 3,
+        "swallowing": 3,
+        "weight_kg": 82.6
+      }
+    },
+    {
+      "report_id": "R018",
+      "patient_id": "P002",
+      "reported_at": "2026-09-24T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea very severe \u2014 took ondansetron and it eased a bit. Threw up five times, mostly in the morning. Pain around 3/10, worse when I eat. Sores in my mouth mild, 3/10. Exhausted all day, barely got out of bed.",
+      "questionnaire": {
+        "nausea": 8,
+        "vomiting_episodes": 4,
+        "pain": 5,
+        "mouth_sores": 3,
+        "swallowing": 3,
+        "weight_kg": 82.6
+      }
+    },
+    {
+      "report_id": "R019",
+      "patient_id": "P002",
+      "reported_at": "2026-09-28T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt queasy all morning, moderate. Threw up three times, mostly in the morning. Pain mild today, swallowing hurts. Sores in my mouth mild, 3/10. Swallowing is mild, food gets stuck. Very tired today, quite bad fatigue. Lost some weight, 82.2 kg now.",
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 2,
+        "pain": 5,
+        "mouth_sores": 5,
+        "swallowing": 2,
+        "weight_kg": 82.2
+      }
+    },
+    {
+      "report_id": "R020",
+      "patient_id": "P002",
+      "reported_at": "2026-10-01T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt nauseous most of the day, moderate nausea. Vomited once today. Pain moderate today, swallowing hurts. Mouth sores are moderate, eating is painful. Exhausted all day, barely got out of bed.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 3,
+        "pain": 5,
+        "mouth_sores": 3,
+        "swallowing": 3,
+        "weight_kg": 82.2
+      }
+    },
+    {
+      "report_id": "R021",
+      "patient_id": "P002",
+      "reported_at": "2026-10-05T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 1,
+        "pain": 4,
+        "mouth_sores": 3,
+        "swallowing": 2,
+        "weight_kg": 82.0
+      }
+    },
+    {
+      "report_id": "R022",
+      "patient_id": "P002",
+      "reported_at": "2026-10-08T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Sores in my mouth mild, 3/10. Hard to swallow today, moderate. Sticking to liquids. Very tired today, moderate fatigue.",
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 2,
+        "pain": 4,
+        "mouth_sores": 4,
+        "swallowing": 2,
+        "weight_kg": 82.0
+      }
+    },
+    {
+      "report_id": "R023",
+      "patient_id": "P002",
+      "reported_at": "2026-10-12T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 2,
+        "vomiting_episodes": 1,
+        "pain": 4,
+        "mouth_sores": 3,
+        "swallowing": 1,
+        "weight_kg": 81.9
+      }
+    },
+    {
+      "report_id": "R024",
+      "patient_id": "P002",
+      "reported_at": "2026-10-15T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea mild \u2014 took ondansetron and it eased a bit. Threw up once, mostly in the morning. Pain around 4/10, worse when I eat. More mouth sores today, mild. Using the mouthwash.",
+      "questionnaire": {
+        "nausea": 2,
+        "vomiting_episodes": 0,
+        "pain": 4,
+        "mouth_sores": 4,
+        "swallowing": 1,
+        "weight_kg": 81.9
+      }
+    },
+    {
+      "report_id": "R025",
+      "patient_id": "P003",
+      "reported_at": "2026-09-07T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Pain mild today, swallowing hurts. Swallowing is mild, food gets stuck. Lost some weight, 61.0 kg now.",
+      "questionnaire": {
+        "nausea": 2,
+        "vomiting_episodes": 0,
+        "pain": 2,
+        "mouth_sores": 0,
+        "swallowing": 2,
+        "weight_kg": 61.0
+      }
+    },
+    {
+      "report_id": "R026",
+      "patient_id": "P003",
+      "reported_at": "2026-09-10T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Pain around 3/10, worse when I eat. More mouth sores today, mild. Using the mouthwash. Very tired today, moderate fatigue.",
+      "questionnaire": {
+        "nausea": 1,
+        "vomiting_episodes": 1,
+        "pain": 2,
+        "mouth_sores": 0,
+        "swallowing": 1,
+        "weight_kg": 61.0
+      }
+    },
+    {
+      "report_id": "R027",
+      "patient_id": "P003",
+      "reported_at": "2026-09-14T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt queasy all morning, moderate. Threw up twice, mostly in the morning. Pain around 5/10, worse when I eat. Trouble swallowing, about 4/10. Exhausted all day, barely got out of bed. Lost some weight, 60.7 kg now.",
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 0,
+        "pain": 4,
+        "mouth_sores": 1,
+        "swallowing": 3,
+        "weight_kg": 60.7
+      }
+    },
+    {
+      "report_id": "R028",
+      "patient_id": "P003",
+      "reported_at": "2026-09-17T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Felt queasy all morning, mild. Vomited once today. Pain around 5/10, worse when I eat. Sores in my mouth mild, 2/10. Trouble swallowing, about 3/10. Exhausted all day, barely got out of bed. Lost some weight, 60.7 kg now.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R029",
+      "patient_id": "P003",
+      "reported_at": "2026-09-21T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea was quite bad today, worst after eating. Vomited three times today. Pain quite bad today, swallowing hurts. Sores in my mouth mild, 3/10. Hard to swallow today, moderate. Sticking to liquids. Lost some weight, 60.3 kg now.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 1,
+        "pain": 5,
+        "mouth_sores": 3,
+        "swallowing": 3,
+        "weight_kg": 60.3
+      }
+    },
+    {
+      "report_id": "R030",
+      "patient_id": "P003",
+      "reported_at": "2026-09-24T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea moderate \u2014 took ondansetron and it eased a bit. Vomited three times today. Throat pain was moderate, about 5/10. Sores in my mouth moderate, 4/10. Hard to swallow today, mild. Sticking to liquids. Exhausted all day, barely got out of bed. Weighed myself: 60.3 kg, down a bit.",
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 2,
+        "pain": 4,
+        "mouth_sores": 3,
+        "swallowing": 5,
+        "weight_kg": 60.3
+      }
+    },
+    {
+      "report_id": "R031",
+      "patient_id": "P003",
+      "reported_at": "2026-09-28T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 1,
+        "pain": 6,
+        "mouth_sores": 4,
+        "swallowing": 4,
+        "weight_kg": 60.0
+      }
+    },
+    {
+      "report_id": "R032",
+      "patient_id": "P003",
+      "reported_at": "2026-10-01T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea was moderate today, worst after eating. Pain around 6/10, worse when I eat. More mouth sores today, quite bad. Using the mouthwash. Trouble swallowing, about 6/10. Lost some weight, 60.0 kg now.",
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 0,
+        "pain": 6,
+        "mouth_sores": 5,
+        "swallowing": 5,
+        "weight_kg": 60.0
+      }
+    },
+    {
+      "report_id": "R033",
+      "patient_id": "P003",
+      "reported_at": "2026-10-05T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Nausea moderate \u2014 took ondansetron and it eased a bit. Threw up once, mostly in the morning. Pain moderate today, swallowing hurts. Mouth sores are moderate, eating is painful. Trouble swallowing, about 3/10. Exhausted all day, barely got out of bed.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R034",
+      "patient_id": "P003",
+      "reported_at": "2026-10-08T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt nauseous most of the day, mild nausea. Pain moderate today, swallowing hurts. More mouth sores today, moderate. Using the mouthwash. Trouble swallowing, about 3/10. Lost some weight, 59.7 kg now.",
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 2,
+        "pain": 6,
+        "mouth_sores": 4,
+        "swallowing": 4,
+        "weight_kg": 59.7
+      }
+    },
+    {
+      "report_id": "R035",
+      "patient_id": "P003",
+      "reported_at": "2026-10-12T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Nausea was moderate today, worst after eating. Pain mild today, swallowing hurts. More mouth sores today, moderate. Using the mouthwash. Hard to swallow today, moderate. Sticking to liquids. Weighed myself: 59.5 kg, down a bit.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R036",
+      "patient_id": "P003",
+      "reported_at": "2026-10-15T19:30:00",
+      "source": "app_free_text",
+      "free_text": "Nausea was moderate today, worst after eating. Pain around 3/10, worse when I eat. More mouth sores today, moderate. Using the mouthwash. Swallowing is moderate, food gets stuck. Lost some weight, 59.5 kg now.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R037",
+      "patient_id": "P004",
+      "reported_at": "2026-09-07T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 0,
+        "pain": 2,
+        "mouth_sores": 0,
+        "swallowing": 2,
+        "weight_kg": 78.0
+      }
+    },
+    {
+      "report_id": "R038",
+      "patient_id": "P004",
+      "reported_at": "2026-09-10T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Feeling better today, nausea mostly gone.",
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 0,
+        "pain": 1,
+        "mouth_sores": 0,
+        "swallowing": 1,
+        "weight_kg": 78.0
+      }
+    },
+    {
+      "report_id": "R039",
+      "patient_id": "P004",
+      "reported_at": "2026-09-14T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea mild \u2014 took ondansetron and it eased a bit. Pain mild today, swallowing hurts.",
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 0,
+        "pain": 2,
+        "mouth_sores": 1,
+        "swallowing": 1,
+        "weight_kg": 77.1
+      }
+    },
+    {
+      "report_id": "R040",
+      "patient_id": "P004",
+      "reported_at": "2026-09-17T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea was moderate today, worst after eating. Vomited twice today. Pain around 4/10, worse when I eat. More mouth sores today, mild. Using the mouthwash.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 2,
+        "pain": 3,
+        "mouth_sores": 2,
+        "swallowing": 3,
+        "weight_kg": 77.1
+      }
+    },
+    {
+      "report_id": "R041",
+      "patient_id": "P004",
+      "reported_at": "2026-09-21T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea was moderate today, worst after eating. Threw up once after dinner. Pain around 5/10, worse when I eat. Mouth sores are mild, eating is painful. Trouble swallowing, about 4/10.",
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 0,
+        "pain": 4,
+        "mouth_sores": 4,
+        "swallowing": 4,
+        "weight_kg": 76.2
+      }
+    },
+    {
+      "report_id": "R042",
+      "patient_id": "P004",
+      "reported_at": "2026-09-24T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt nauseous most of the day, moderate nausea. Vomited once today. Pain moderate today, swallowing hurts. Mouth sores are mild, eating is painful. Swallowing is moderate, food gets stuck. Weighed myself: 76.2 kg, down a bit.",
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 2,
+        "pain": 5,
+        "mouth_sores": 3,
+        "swallowing": 5,
+        "weight_kg": 76.2
+      }
+    },
+    {
+      "report_id": "R043",
+      "patient_id": "P004",
+      "reported_at": "2026-09-28T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea was quite bad today, worst after eating. Threw up twice after dinner. Throat pain was moderate, about 5/10. Sores in my mouth mild, 3/10. Trouble swallowing, about 6/10.",
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 0,
+        "pain": 5,
+        "mouth_sores": 5,
+        "swallowing": 5,
+        "weight_kg": 75.3
+      }
+    },
+    {
+      "report_id": "R044",
+      "patient_id": "P004",
+      "reported_at": "2026-10-01T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt queasy all morning, quite bad. Vomited once today. Throat pain was moderate, about 4/10. Mouth sores are moderate, eating is painful. Trouble swallowing, about 5/10. Low energy, quite bad. Lost some weight, 75.3 kg now.",
+      "questionnaire": {
+        "nausea": 5,
+        "vomiting_episodes": 2,
+        "pain": 6,
+        "mouth_sores": 5,
+        "swallowing": 5,
+        "weight_kg": 75.3
+      }
+    },
+    {
+      "report_id": "R045",
+      "patient_id": "P004",
+      "reported_at": "2026-10-05T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Nausea moderate \u2014 took ondansetron and it eased a bit. Throat pain was moderate, about 5/10. Sores in my mouth moderate, 4/10. Swallowing is bad, food gets stuck.",
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 1,
+        "pain": 5,
+        "mouth_sores": 6,
+        "swallowing": 5,
+        "weight_kg": 74.4
+      }
+    },
+    {
+      "report_id": "R046",
+      "patient_id": "P004",
+      "reported_at": "2026-10-08T19:30:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Felt nauseous most of the day, mild nausea. Pain moderate today, swallowing hurts. More mouth sores today, quite bad. Using the mouthwash. Trouble swallowing, about 6/10.",
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 0,
+        "pain": 6,
+        "mouth_sores": 4,
+        "swallowing": 6,
+        "weight_kg": 74.4
+      }
+    },
+    {
+      "report_id": "R047",
+      "patient_id": "P004",
+      "reported_at": "2026-10-12T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 0,
+        "pain": 5,
+        "mouth_sores": 4,
+        "swallowing": 6,
+        "weight_kg": 73.5
+      }
+    },
+    {
+      "report_id": "R048",
+      "patient_id": "P004",
+      "reported_at": "2026-10-15T19:30:00",
+      "source": "questionnaire",
+      "free_text": null,
+      "questionnaire": {
+        "nausea": 3,
+        "vomiting_episodes": 0,
+        "pain": 5,
+        "mouth_sores": 4,
+        "swallowing": 5,
+        "weight_kg": 73.5
+      }
+    },
+    {
+      "report_id": "R049",
+      "patient_id": "P003",
+      "reported_at": "2026-09-23T20:05:00",
+      "source": "app_free_text",
+      "free_text": "Felt bad all day, not great. Hard to say how bad.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R050",
+      "patient_id": "P003",
+      "reported_at": "2026-09-30T19:45:00",
+      "source": "app_free_text+questionnaire",
+      "free_text": "Threw up twice after dinner, felt nauseous all morning.",
+      "questionnaire": {
+        "nausea": 6,
+        "vomiting_episodes": 0,
+        "pain": 4,
+        "mouth_sores": 3,
+        "swallowing": 4,
+        "weight_kg": 59.8
+      }
+    },
+    {
+      "report_id": "R051",
+      "patient_id": "P001",
+      "reported_at": "2026-10-07T18:20:00",
+      "source": "app_free_text",
+      "free_text": "Threw up a few times today and my mouth hurts.",
+      "questionnaire": null
+    },
+    {
+      "report_id": "R052",
+      "patient_id": "P004",
+      "reported_at": "2026-10-14T08:10:00",
+      "source": "app_free_text",
+      "free_text": "Weighed myself this morning: 163 pounds. Eating is very hard, swallowing is the worst it has been.",
+      "questionnaire": {
+        "nausea": 4,
+        "vomiting_episodes": 0,
+        "pain": 5,
+        "mouth_sores": 5,
+        "swallowing": 8,
+        "weight_kg": 73.9
+      }
+    }
+  ]
+}
