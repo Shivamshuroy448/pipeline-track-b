@@ -4,9 +4,13 @@ Free-text -> structured symptom parser (deterministic, no API key needed).
 Design decisions (defended in README.md):
 - Lexicon + rules, not a black box. Every extracted field can be traced to
   the exact words that produced it, which is what makes validation possible.
-- An LLM slot exists (parse_with_llm, optional) but the default path is
-  rule-based: the demo must run offline, and a hallucinated severity in a
-  clinical summary is worse than a missing one.
+- Two extraction paths, one validator. The default is rule-based: the
+  demo must run offline, and a hallucinated severity in a clinical
+  summary is worse than a missing one. parse_with_llm wires a real LLM
+  (see llm_client.py) behind the SAME validator (_validate_event):
+  the LLM proposes, the validator disposes. If the LLM call fails or
+  returns nothing usable, the rule-based parser runs instead and every
+  event is flagged llm_fallback, so the fallback is visible.
 - Nothing is silently dropped. A vague report produces an event with
   severity NULL and a flag, never a guessed number.
 - Confidence is explicit and every event carries validation flags.
@@ -17,6 +21,8 @@ Validation flags:
   frequency_estimate "a few times" -> recorded as 3, flagged as an estimate
   conflict_q_vs_text questionnaire disagrees with the free text
   needs_review       confidence < 0.5, a human should look at it
+  llm_fallback       LLM call failed or returned nothing usable; the
+                     rule-based parser ran instead (LLM path only)
 """
 
 import re
@@ -106,6 +112,86 @@ def _find_medication(text):
     return None
 
 
+def _coerce_int(value, low, high):
+    """Strict int coercion for LLM output: bad values become None."""
+    if isinstance(value, bool):
+        return None
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        return None
+    if n < low or n > high:
+        return None
+    return n
+
+
+def _coerce_float(value):
+    """Strict float coercion for LLM output: bad values become None."""
+    if isinstance(value, bool):
+        return None
+    try:
+        n = float(value)
+    except (TypeError, ValueError):
+        return None
+    if n <= 0 or n >= 500:
+        return None
+    return n
+
+
+def _validate_event(symptom, severity, how, frequency, estimated, q,
+                    weight_measured=False):
+    """Shared validator for both parser paths: rule-based and LLM.
+
+    Returns (confidence, flags). The rules:
+    - severity missing/vague is flagged, never guessed (not for vomiting
+      or weight, which have no severity scale);
+    - "a few times" is an estimate, flagged as one;
+    - text vs questionnaire: a gap of 4+ in severity or 2+ in vomiting
+      count is a conflict; a gap of 1 is normal inconsistency;
+    - confidence: explicit numbers 0.9, LLM-reported severity 0.8,
+      severity words 0.75, vague 0.4, missing 0.5; vomiting is scored
+      on its count, weight on the measured value; a conflict costs 0.25;
+    - confidence below 0.5 means a human should review.
+    """
+    flags = []
+    if symptom not in ("vomiting", "weight"):
+        if how == "missing":
+            flags.append("severity_missing")
+        elif how == "vague":
+            flags.append("severity_vague")
+    if estimated:
+        flags.append("frequency_estimate")
+    if q:
+        q_map = {"nausea": q.get("nausea"), "pain": q.get("pain"),
+                 "mouth_sores": q.get("mouth_sores"),
+                 "swallowing": q.get("swallowing")}
+        if symptom in q_map and q_map[symptom] is not None \
+                and severity is not None:
+            if abs(q_map[symptom] - severity) >= 4:
+                flags.append("conflict_q_vs_text")
+        if symptom == "vomiting" and q.get("vomiting_episodes") is not None \
+                and frequency is not None:
+            if abs(q["vomiting_episodes"] - frequency) >= 2:
+                flags.append("conflict_q_vs_text")
+    if symptom == "vomiting":
+        confidence = 0.85 if (frequency is not None and not estimated) \
+            else (0.6 if estimated else 0.5)
+    elif symptom == "weight":
+        confidence = 0.9 if (weight_measured
+                             or q.get("weight_kg") is not None) else 0.5
+    else:
+        confidence = {"numeric": 0.9, "llm": 0.8, "word": 0.75,
+                      "vague": 0.4, "missing": 0.5}[how]
+        if frequency is not None:
+            confidence += 0.05
+    if "conflict_q_vs_text" in flags:
+        confidence -= 0.25
+    confidence = max(0.1, min(0.95, confidence))
+    if confidence < 0.5:
+        flags.append("needs_review")
+    return round(confidence, 2), flags
+
+
 def parse_report(report):
     """Parse one report dict into a list of symptom-event dicts."""
     text = (report.get("free_text") or "").lower()
@@ -169,52 +255,14 @@ def parse_report(report):
             frequency, estimated = _find_frequency(snippet)
         else:
             frequency, estimated = None, False
-        flags = []
-
-        if symptom not in ("vomiting", "weight"):
-            if how == "missing":
-                flags.append("severity_missing")
-            elif how == "vague":
-                flags.append("severity_vague")
-        if estimated:
-            flags.append("frequency_estimate")
-
-        # Cross-check against the questionnaire when both exist.
-        if q:
-            q_map = {"nausea": q.get("nausea"), "pain": q.get("pain"),
-                     "mouth_sores": q.get("mouth_sores"),
-                     "swallowing": q.get("swallowing")}
-            if symptom in q_map and q_map[symptom] is not None \
-                    and severity is not None:
-                if abs(q_map[symptom] - severity) >= 4:
-                    flags.append("conflict_q_vs_text")
-            if symptom == "vomiting" and q.get("vomiting_episodes") is not None \
-                    and frequency is not None:
-                # Patients are inconsistent by a count of 1 all the time;
-                # only a gap of 2+ (or zero vs 2+) is a real conflict.
-                if abs(q["vomiting_episodes"] - frequency) >= 2:
-                    flags.append("conflict_q_vs_text")
-
-        # Confidence: explicit numbers are trusted, words less so, vague
-        # reports least. Conflicts cost 0.25. Floor 0.1, cap 0.95.
-        # Vomiting and weight are measured differently: for vomiting the
-        # count IS the measurement; for weight the measured value is.
-        if symptom == "vomiting":
-            confidence = 0.85 if (frequency is not None and not estimated) \
-                else (0.6 if estimated else 0.5)
-        elif symptom == "weight":
-            m = re.search(r"(\d+(?:\.\d+)?)\s*(pounds|lbs|kg)", snippet)
-            confidence = 0.9 if (m or q.get("weight_kg") is not None) else 0.5
-        else:
-            confidence = {"numeric": 0.9, "word": 0.75,
-                          "vague": 0.4, "missing": 0.5}[how]
-            if frequency is not None:
-                confidence += 0.05
-        if "conflict_q_vs_text" in flags:
-            confidence -= 0.25
-        confidence = max(0.1, min(0.95, confidence))
-        if confidence < 0.5:
-            flags.append("needs_review")
+        # Same validator the LLM path uses: the extraction proposes,
+        # _validate_event disposes.
+        weight_measured = (
+            re.search(r"(\d+(?:\.\d+)?)\s*(pounds|lbs|kg)", snippet)
+            is not None) if symptom == "weight" else False
+        confidence, flags = _validate_event(
+            symptom, severity, how, frequency, estimated, q,
+            weight_measured=weight_measured)
 
         event = {
             "symptom": symptom,
@@ -263,15 +311,87 @@ def parse_report(report):
     return events
 
 
-def parse_with_llm(report, llm_call):
-    """Optional LLM path: same output contract, same validation.
+def _flag_fallback(events):
+    """Mark every event as a rule-based fallback after an LLM failure."""
+    for e in events:
+        flags = e.get("validation_flags", "")
+        e["validation_flags"] = (
+            (flags + ",llm_fallback") if flags else "llm_fallback")
+    return events
 
-    llm_call(text) must return a list of dicts with keys symptom, severity,
-    frequency_per_day, timing, related_medication. Whatever it returns is
-    run through the same confidence + flag logic as the rule-based path —
-    the LLM proposes, the validator disposes. Not used by default; the demo
-    runs fully offline without it.
+
+def parse_with_llm(report, llm_call):
+    """LLM extraction path: same output contract, same validator.
+
+    llm_call(text) must return a list of dicts, one per symptom found,
+    with keys symptom, severity, frequency_per_day, timing,
+    related_medication (and weight_kg for weight events). Severity may be
+    None when the text does not state one — the LLM must never guess.
+    Every returned event is normalised, then run through _validate_event,
+    exactly like the rule-based path: the LLM proposes, the validator
+    disposes. Unknown symptoms and out-of-range numbers are dropped,
+    never stored.
+
+    If the LLM call fails or returns nothing usable, the rule-based
+    parser runs instead and every event is flagged llm_fallback, so the
+    demo never dies on a bad API response and the fallback is visible.
+    Not used by default; the demo runs fully offline without it.
     """
-    raise NotImplementedError(
-        "Wire llm_call to your provider of choice; the validator in "
-        "parse_report is the part that must not change.")
+    text = (report.get("free_text") or "").strip()
+    q = report.get("questionnaire") or {}
+    now = datetime.now(timezone.utc).isoformat(
+        timespec="seconds").replace("+00:00", "Z")
+    if not text:
+        return parse_report(report)
+    try:
+        raw = llm_call(text)
+    except Exception:
+        return _flag_fallback(parse_report(report))
+    if not isinstance(raw, list) or not raw:
+        return _flag_fallback(parse_report(report))
+    events = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        symptom = str(item.get("symptom") or "").strip().lower()
+        if symptom not in SYMPTOMS:
+            continue
+        severity = _coerce_int(item.get("severity"), 0, 10)
+        frequency = _coerce_int(item.get("frequency_per_day"), 0, 99) \
+            if symptom == "vomiting" else None
+        timing = item.get("timing") or None
+        timing = str(timing).strip().lower() if timing else None
+        med = item.get("related_medication") or None
+        med = str(med).strip().lower() if med else None
+        weight_kg = None
+        if symptom == "weight":
+            weight_kg = _coerce_float(item.get("weight_kg"))
+        how = "llm" if severity is not None else "missing"
+        confidence, flags = _validate_event(
+            symptom, severity, how, frequency, False, q,
+            weight_measured=(weight_kg is not None))
+        event = {
+            "symptom": symptom, "severity": severity,
+            "frequency_per_day": frequency, "timing": timing,
+            "related_medication": med, "confidence": confidence,
+            "validation_flags": ",".join(flags),
+        }
+        if weight_kg is not None:
+            event["weight_kg"] = weight_kg
+        events.append(event)
+    if not events:
+        return _flag_fallback(parse_report(report))
+    # Weight from the questionnaire still gets a point for every
+    # reporting day, same as the rule-based path.
+    if q.get("weight_kg") is not None and not any(
+            e["symptom"] == "weight" for e in events):
+        events.append({
+            "symptom": "weight", "severity": None,
+            "frequency_per_day": None, "timing": None,
+            "related_medication": None, "confidence": 0.95,
+            "validation_flags": "questionnaire_only",
+            "weight_kg": q["weight_kg"],
+        })
+    for e in events:
+        e["extracted_at"] = now
+    return events

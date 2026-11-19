@@ -1,5 +1,6 @@
 # Build artifacts — app.py rebuilds tracker.db from data/reports.json
-tracker.db
+*.db
+.DS_Store
 __pycache__/
 *.pyc
 .venv/

@@ -2,22 +2,38 @@
 Build the SQLite store from data/reports.json.
 
   python build_db.py        ->  writes tracker.db (deletes any old one)
+  python build_db.py --llm  ->  same, but extraction goes through the LLM
+                                 (needs GEMINI_API_KEY; see llm_client.py).
+                                 Every LLM event runs through the same
+                                 validator as the rule-based path, and any
+                                 LLM failure falls back to rule-based with
+                                 an llm_fallback flag.
 
 Steps: create schema -> load patients, medications, medication changes ->
 store every raw report verbatim -> parse each report -> store events.
 The raw text is never overwritten, so any parse can be audited or re-run.
 """
 
+import argparse
 import json
 import os
 import sqlite3
 
-from parser import parse_report
+from parser import parse_report, parse_with_llm
 
 DB_PATH = "tracker.db"
 
 
-def build(db_path=DB_PATH, data_path="data/reports.json"):
+def build(db_path=DB_PATH, data_path="data/reports.json", use_llm=False,
+          parse_fn=None):
+    if parse_fn is None:
+        if use_llm:
+            from llm_client import gemini_extract
+            parse_fn = lambda r: parse_with_llm(r, gemini_extract)
+            print("LLM extraction path (Gemini); rule-based fallback "
+                  "on errors, flagged llm_fallback.")
+        else:
+            parse_fn = parse_report
     if os.path.exists(db_path):
         os.remove(db_path)
     with open(data_path) as f:
@@ -56,7 +72,7 @@ def build(db_path=DB_PATH, data_path="data/reports.json"):
              r.get("free_text"), q.get("nausea"), q.get("vomiting_episodes"),
              q.get("pain"), q.get("mouth_sores"), q.get("swallowing"),
              q.get("weight_kg")))
-        for e in parse_report(r):
+        for e in parse_fn(r):
             flags = e.get("validation_flags", "")
             if flags and flags != "questionnaire_only":
                 n_flagged += 1
@@ -81,4 +97,8 @@ def build(db_path=DB_PATH, data_path="data/reports.json"):
 
 
 if __name__ == "__main__":
-    build()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--llm", action="store_true",
+                    help="extract with the LLM (needs GEMINI_API_KEY)")
+    args = ap.parse_args()
+    build(use_llm=args.llm)

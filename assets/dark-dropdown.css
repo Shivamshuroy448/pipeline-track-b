@@ -1,0 +1,23 @@
+/* Dark theme for the Dash 4 patient dropdown (Dash serves assets/*.css). */
+.dash-dropdown {
+  background-color: #121826 !important;
+  color: #e8edf5 !important;
+  border: 1px solid #232c3d !important;
+  border-radius: 8px !important;
+}
+.dash-dropdown:hover {
+  border-color: #2dd4bf !important;
+}
+.dash-options-list {
+  background-color: #121826 !important;
+  border: 1px solid #232c3d !important;
+  color: #e8edf5 !important;
+}
+.dash-dropdown-option {
+  color: #e8edf5 !important;
+}
+.dash-dropdown-option:hover,
+.dash-dropdown-option[data-selected="true"] {
+  background-color: #1a2233 !important;
+  color: #2dd4bf !important;
+}

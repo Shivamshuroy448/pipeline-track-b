@@ -67,9 +67,11 @@ Run `python queries.py` (or show the output):
 
 ## 13:00–15:00 — Trade-offs and AI usage (say these before they ask)
 
-- "Rule-based parser, not an LLM, by default — the demo has to run offline,
-  and no severity may be hallucinated. An LLM would slot in behind the
-  same validator: it proposes, the validator disposes."
+- "Rule-based parser by default — the demo has to run offline, and no
+  severity may be hallucinated. The LLM path is built and wired
+  (llm_client.py + parse_with_llm, `python build_db.py --llm` with
+  GEMINI_API_KEY): it runs behind the same validator, and any failure
+  falls back to rule-based, flagged llm_fallback."
 - "SQLite, not Postgres — one file, zero setup, right for a prototype.
   The schema ports unchanged."
 - "AI wrote the code from my design. I verified it by running the pipeline
@@ -81,10 +83,11 @@ Run `python queries.py` (or show the output):
 ## Anticipated Q&A
 
 **Why not just use an LLM for extraction?**
-"For the demo, traceability beats fluency. Every field here maps to exact
-words. An LLM is the right next step for messier text — but it would sit
-behind the same confidence and flag logic, and a low-confidence extraction
-would still go to a human."
+"Both paths exist. The default is rule-based because the demo has to run
+offline and every field maps to exact words. The LLM path is wired in —
+same prompt contract, same validator, same flags — and a low-confidence
+extraction still goes to a human. If the LLM call fails, the rule-based
+parser runs instead and the event is flagged llm_fallback."
 
 **How do you handle conflicting reports?**
 "Flag, don't resolve. The questionnaire and the free text disagree
@@ -108,6 +111,8 @@ calling it a weekly total would be inventing data. The honest number is
 episodes on reported days, and the chart says so."
 
 **What would you do with another week?**
-"Two things: an LLM extraction path behind the same validator, and a
-per-patient 'what changed since last visit' summary — which is the bridge
-to Track C."
+"Two things: a per-patient 'what changed since last visit' summary —
+which is the bridge to Track C — and a real review workflow for the
+flags table instead of a list. The LLM path is already done, so the
+next step is what a provider does with the output, not how it is
+extracted."

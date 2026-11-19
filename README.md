@@ -11,13 +11,20 @@ real patient information anywhere.**
 pip install -r requirements.txt
 python generate_data.py   # writes data/reports.json (seeded, deterministic)
 python build_db.py        # parses every report into tracker.db (SQLite)
+python build_db.py --llm  # same, but extraction via Gemini (needs
+                          # GEMINI_API_KEY in the environment; any LLM
+                          # failure falls back to rule-based, flagged)
 python queries.py         # the two required queries + the flags list
-python -m unittest discover -s tests -v   # 16 tests: parser + verified numbers
+python -m unittest discover -s tests -v   # 23 tests: parser + LLM path +
+                                          # verified numbers
 python app.py             # dashboard at http://127.0.0.1:8050
 ```
 
 `app.py` builds the database itself if `tracker.db` is missing, so
-`python app.py` alone is enough for the demo.
+`python app.py` alone is enough for the demo. The LLM option in the
+phone view needs `GEMINI_API_KEY` in the environment; without it the
+LLM choice falls back to the rule-based parser and says so on screen.
+The console itself (rule-based build) runs fully offline.
 
 ## What is in here
 
@@ -25,11 +32,13 @@ python app.py             # dashboard at http://127.0.0.1:8050
 |---|---|
 | `generate_data.py` | Seeded generator: 4 patients, 6 weeks, 2 reports/week (Mon + Thu), free text and/or questionnaire. Includes 4 hand-written edge cases (vague report, text-vs-questionnaire conflict, "a few times", weight in pounds). |
 | `schema.sql` | SQLite schema. Raw reports are stored verbatim and never overwritten; parsed symptom events live in a separate table with confidence + validation flags. |
-| `parser.py` | Deterministic lexicon + rules parser: symptom, severity 0–10, frequency, timing, medication. No API key, runs offline. An LLM slot exists (`parse_with_llm`) but is intentionally not the default. |
+| `parser.py` | Two extraction paths, one validator (`_validate_event`): rule-based lexicon + rules by default (symptom, severity 0–10, frequency, timing, medication; no API key, runs offline) and `parse_with_llm` for an LLM caller. Unknown symptoms and out-of-range numbers are dropped, never stored. |
+| `llm_client.py` | Real Gemini client (stdlib urllib only): strict JSON prompt, `GEMINI_API_KEY` from the environment, never hardcoded. `gemini_extract(text)` returns the event list `parse_with_llm` expects. |
+| `assets/dark-dropdown.css` | Dark styling for the Dash 4 patient picker (Dash serves `assets/` automatically). |
 | `build_db.py` | Loads the data, parses every report, writes `tracker.db`. |
 | `queries.py` | Q1 vomiting episodes/week; Q2 nausea 7 days before vs after the P002 antiemetic switch (ondansetron → aprepitant, 2026-09-28); Q3 validation flags. |
-| `tests/test_parser.py` | 16 tests (stdlib `unittest`, nothing to install): severity, vague phrases, word boundaries, frequency, pounds-to-kg, the decimal-weight regression, questionnaire cross-checks, and an integration test that locks in the verified numbers below. |
-| `app.py` | Dash provider console: patient picker, 30-second status banner, alerts, severity trends with a med-change marker, vomiting/week bars, weight trend with a 5% alert line, flags table, raw reports with their parses. |
+| `tests/test_parser.py` | 23 tests (stdlib `unittest`, nothing to install): severity, vague phrases, word boundaries, frequency, pounds-to-kg, the decimal-weight regression, questionnaire cross-checks, the LLM path (validator, conflicts, bad values, fallback), and an integration test that locks in the verified numbers below. |
+| `app.py` | Dash console in the Pipeline demo's UI language (light warm background, white cards, teal accent, left rail). Two views: Clinic console (stats row, patients table with click-to-review, 30-second status banner, alerts, severity trends with a med-change marker, vomiting/week bars, weight trend with a 5% alert line, flags table, raw reports, recent check-ins) and Patient app (phone-frame "Today" view + a live "Log a report" box: type free text, pick Rule-based or LLM (Gemini), and watch it parse into structured events with confidence + flags). |
 | `DEMO_SCRIPT.md` | 15-minute talk track + anticipated Q&A. |
 
 ## Design decisions (the ones to defend in the interview)
@@ -68,11 +77,13 @@ python app.py             # dashboard at http://127.0.0.1:8050
 
 ## Trade-offs (say these out loud — they are strengths)
 
-- **Rule-based parser instead of an LLM by default.** The demo must run
+- **Rule-based parser by default, LLM path wired in.** The demo must run
   offline, and every extraction must be traceable to the words that
-  produced it. An LLM extraction step with structured output would slot
-  into `parse_with_llm` behind the *same* validator — the LLM proposes,
-  the validator disposes.
+  produced it. The LLM path (`llm_client.py` + `parse_with_llm`, via
+  `python build_db.py --llm`) uses the *same* validator — the LLM
+  proposes, the validator disposes — and any LLM failure falls back to
+  rule-based, flagged `llm_fallback`. An LLM-reported severity scores
+  confidence 0.8; a missing one is flagged, never guessed.
 - **SQLite, not Postgres.** One file, zero setup, correct for a prototype.
   The schema ports unchanged.
 - **Synthetic data, seeded.** Realistic trajectories (side effects build
